@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Techmetria - Gestão de Consumo</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        tech: {
+                            blue: '#004080',    /* Azul Techmetria */
+                            dark: '#002a55',    /* Azul Escuro */
+                            light: '#e6f0fa',   /* Fundo Azulado */
+                            green: '#76bd22',   /* Verde Techmetria */
+                        },
+                        slate: { 850: '#1e293b' }
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-50 min-h-screen text-slate-800 font-sans">
+    <a href="#main-content" class="accessibility-skip text-tech-blue font-bold">Pular para o conteúdo principal</a>
+    
+    <div id="toast-container"></div>
+
+    <div id="condo-selector-screen" class="min-h-screen flex flex-col items-center justify-center py-10 fade-in relative overflow-hidden bg-slate-100">
+        <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-tech-blue via-tech-green to-tech-blue"></div>
+        <div class="absolute bottom-0 right-0 w-96 h-96 bg-tech-blue rounded-full mix-blend-multiply filter blur-3xl opacity-5"></div>
+        <div class="absolute top-0 left-0 w-96 h-96 bg-tech-green rounded-full mix-blend-multiply filter blur-3xl opacity-5"></div>
+
+        <div class="container mx-auto px-4 max-w-6xl z-10">
+            <header class="mb-12 text-center">
+                <div class="mb-8 inline-block">
+                    <img src="https://lh3.googleusercontent.com/d/1ipB03pEAEsV_u0jBzLF27qEjgAoAX4U8" alt="Techmetria Logo" class="h-28 mx-auto drop-shadow-sm object-contain">
+                </div>
+                <h1 class="text-2xl md:text-3xl font-medium text-slate-600 mb-2">Sistema de Gestão de Relatórios - Energia ⚡</h1>
+                <p class="text-slate-400">Selecione o condomínio para iniciar o processamento.</p>
+            </header>
+
+            <main id="condo-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 slide-up">
+                <div class="col-span-full flex flex-col items-center justify-center p-12 bg-white rounded-lg shadow-sm border border-slate-200">
+                    <div class="loading-spinner mb-4"></div>
+                    <p class="text-slate-600 font-medium">Sincronizando com a base de dados...</p>
+                </div>
+            </main>
+        </div>
+        
+        <footer class="absolute bottom-4 text-center w-full text-slate-400 text-sm">
+            &copy; <span id="year-login">2025</span> Techmetria Soluções.
+        </footer>
+    </div>
+
+    <div id="main-dashboard-screen" class="hidden min-h-screen flex flex-col bg-slate-50">
+        <nav class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+            <div class="container mx-auto px-4 max-w-7xl h-18 flex items-center justify-between py-3">
+                <div class="flex items-center gap-4">
+                    <img src="https://lh3.googleusercontent.com/d/1ipB03pEAEsV_u0jBzLF27qEjgAoAX4U8" alt="Techmetria Logo" class="h-12 w-auto object-contain">
+                    
+                    <div class="h-8 w-px bg-slate-200 mx-2"></div>
+                    <h1 id="dashboard-title" class="text-lg font-semibold text-slate-700 truncate max-w-xs md:max-w-md">Dashboard</h1>
+                </div>
+                <button id="back-to-selector" class="text-slate-500 hover:text-tech-blue font-medium text-sm flex items-center transition-colors px-4 py-2 rounded border border-transparent hover:bg-tech-light hover:border-tech-blue/20">
+                    <i class="fas fa-chevron-left mr-2"></i> Voltar
+                </button>
+            </div>
+        </nav>
+
+        <div class="container mx-auto px-4 py-8 max-w-7xl flex-grow fade-in">
+            
+            <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8" aria-label="Configuração do sistema">
+                
+                <div class="lg:col-span-4 space-y-6">
+                    <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6 card-hover relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-tech-blue"></div>
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                                <span class="bg-tech-blue text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">1</span>
+                                Importar Medições
+                            </h2>
+                        </div>
+                        <div class="file-drop-zone rounded-lg p-8 text-center cursor-pointer relative group" onclick="document.getElementById('fileInput').click()">
+                            <div class="transition-transform group-hover:-translate-y-1 duration-300">
+                                <i class="fas fa-file-excel text-3xl text-green-600 mb-3 block"></i>
+                                <p class="text-slate-600 font-medium text-sm">Carregar arquivo .xlsx</p>
+                            </div>
+                        </div>
+                        <input type="file" id="fileInput" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" class="hidden">
+                        <div id="file-feedback" class="mt-3 text-sm text-center min-h-[20px]"></div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6 relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-slate-300"></div>
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                                <i class="fas fa-image text-slate-400"></i> Identidade Visual
+                            </h2>
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-white bg-tech-green px-2 py-0.5 rounded">Padrão</span>
+                        </div>
+                        <div class="rounded-lg p-6 bg-slate-50 border border-slate-100 flex flex-col items-center justify-center text-center">
+                            <img src="https://lh3.googleusercontent.com/d/1ipB03pEAEsV_u0jBzLF27qEjgAoAX4U8" alt="Logo Fixo Techmetria" class="h-20 object-contain mb-3 drop-shadow-sm">
+                            <p class="text-slate-500 text-xs font-medium">Este logo será aplicado automaticamente em todos os relatórios.</p>
+                            <div id="logo-loading-status" class="mt-2 text-xs text-tech-blue flex items-center">
+                                <i class="fas fa-circle-notch fa-spin mr-1"></i> Carregando...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-8">
+                    <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6 h-full flex flex-col relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-tech-green"></div>
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                                <span class="bg-tech-green text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">2</span>
+                                Parâmetros da Simulação
+                            </h2>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 flex-grow">
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Período de Referência</label>
+                                    <div class="flex items-center gap-2">
+                                        <input type="date" id="periodo-de" class="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded text-slate-700 focus:outline-none focus:ring-1 focus:ring-tech-blue focus:border-tech-blue transition-all">
+                                        <span class="text-slate-400">até</span>
+                                        <input type="date" id="periodo-ate" class="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded text-slate-700 focus:outline-none focus:ring-1 focus:ring-tech-blue focus:border-tech-blue transition-all">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Data da Próxima Leitura</label>
+                                    <input type="date" id="proxima-leitura" class="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded text-slate-700 focus:outline-none focus:ring-1 focus:ring-tech-blue focus:border-tech-blue transition-all">
+                                </div>
+                            </div>
+
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Tarifa (R$/m³)</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500 font-bold">R$</div>
+                                        <input type="text" id="tarifa-energia" placeholder="0,00" class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-300 rounded text-slate-700 focus:outline-none focus:ring-1 focus:ring-tech-blue focus:border-tech-blue transition-all font-mono">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1.5">Taxa de Gestão (Fixo)</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500 font-bold">R$</div>
+                                        <input type="text" id="taxa-gestao" placeholder="0,00" class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-300 rounded text-slate-700 focus:outline-none focus:ring-1 focus:ring-tech-blue focus:border-tech-blue transition-all font-mono">
+                                    </div>
+                                </div>
+                                
+                                <div class="pt-4">
+                                    <div class="flex items-center p-3 border border-slate-200 bg-slate-50 rounded cursor-pointer hover:bg-tech-light transition-colors">
+                                        <input type="checkbox" id="rateio-area-comum" class="h-5 w-5 text-tech-blue border-gray-300 rounded focus:ring-tech-blue cursor-pointer">
+                                        <label for="rateio-area-comum" class="ml-3 block text-sm font-semibold text-slate-700 cursor-pointer select-none">
+                                            Ratear Custo da Área Comum
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div id="progress-container" class="mb-8 hidden fade-in">
+                <div class="bg-white rounded-lg shadow-md p-5 border-l-4 border-tech-green">
+                    <div class="flex items-center justify-between mb-3">
+                        <span id="progress-label" class="text-sm font-semibold text-tech-blue flex items-center gap-2">
+                            <i class="fas fa-cog fa-spin"></i> Processando dados...
+                        </span>
+                        <span id="progress-text" class="text-sm font-bold text-slate-600">0%</span>
+                    </div>
+                    <div class="progress-bar h-2 bg-slate-100 rounded-full overflow-hidden">
+                        <div id="progress-fill" class="progress-bar-fill h-full bg-tech-green transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <section class="mb-10 no-print" aria-label="Ações">
+                <div class="flex flex-wrap gap-4 items-center justify-end">
+                    <button id="preview-button" class="group px-6 py-3 rounded shadow-sm border border-slate-300 font-bold text-slate-600 bg-white hover:bg-tech-light hover:text-tech-blue hover:border-tech-blue transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center" disabled>
+                        <i class="fas fa-eye mr-2"></i>
+                        Simular
+                    </button>
+                    
+                    <button id="process-button" class="group px-8 py-3 rounded shadow-md font-bold text-white bg-tech-blue hover:bg-tech-dark transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center" disabled>
+                        <i class="fas fa-file-invoice mr-2"></i>
+                        Gerar Relatórios Finais
+                    </button>
+                </div>
+            </section>
+            
+            <section id="download-links-section" class="mb-8 hidden fade-in">
+                <div class="bg-green-50 rounded-lg border border-green-200 p-6 flex flex-col md:flex-row items-center justify-between gap-4 shadow-sm">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-white p-2 rounded-full text-green-600 shadow-sm">
+                            <i class="fas fa-check-circle text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-green-900">Sucesso!</h3>
+                            <p class="text-green-700 text-sm">Relatórios gerados e prontos para download.</p>
+                        </div>
+                    </div>
+                    <div id="download-links-container" class="flex flex-wrap gap-3"></div>
+                </div>
+            </section>
+
+            <main id="main-content" class="space-y-8" tabindex="-1">
+                
+                <section id="previewContainer" class="hidden fade-in bg-white rounded-lg shadow-lg overflow-hidden border border-slate-200">
+                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                        <h2 class="font-bold text-slate-700 flex items-center gap-2">
+                            <i class="fas fa-laptop text-tech-blue"></i> Visualização
+                        </h2>
+                        <button id="closePreviewButton" class="text-slate-400 hover:text-red-500 transition-colors p-2">
+                            <i class="fas fa-times text-lg"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="border-b border-slate-200 bg-white px-6 pt-2 overflow-x-auto no-scrollbar">
+                        <nav id="preview-tabs" class="flex whitespace-nowrap" aria-label="Abas"></nav>
+                    </div>
+                    
+                    <div id="preview-tab-content" class="bg-slate-100 p-4 min-h-[500px]"></div>
+                </section>
+
+                <section class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden" aria-label="Pré-visualização das Medições">
+                    <div class="p-6 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                                <i class="fas fa-list text-slate-400"></i> Conferência de Dados
+                            </h2>
+                            <p class="text-slate-500 text-sm mt-1">Valide as leituras abaixo antes de gerar os relatórios.</p>
+                        </div>
+                        <div class="text-xs text-slate-500 bg-slate-50 px-3 py-1 rounded border border-slate-200">
+                            <i class="fas fa-pen mr-1"></i> Clique na célula para editar
+                        </div>
+                    </div>
+                    
+                    <div id="reportContainer" class="p-0">
+                        <div class="flex flex-col items-center justify-center py-20 text-slate-400 bg-slate-50/30">
+                            <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4 text-slate-300">
+                                <i class="fas fa-table text-2xl"></i>
+                            </div>
+                            <p class="font-medium">Nenhum dado carregado.</p>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+        
+        <footer class="bg-white border-t border-slate-200 mt-auto py-6">
+            <div class="container mx-auto px-4 text-center text-slate-400 text-xs uppercase tracking-wide">
+                &copy; <span id="year">2025</span> Techmetria &bull; Sistema de Gestão Inteligente
+            </div>
+        </footer>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="script.js" defer></script>
+</body>
+</html>

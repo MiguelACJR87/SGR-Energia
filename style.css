@@ -1,0 +1,205 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+    /* Paleta Techmetria: Azul Confiança + Verde Eficiência */
+    --primary-color: #004080;   /* Azul Techmetria Escuro */
+    --primary-dark: #002a55;    /* Azul Profundo */
+    --primary-light: #e6f0fa;   /* Fundo Azulado Claro */
+    --accent-color: #76bd22;    /* Verde Techmetria (Vibrante) */
+    
+    --secondary-color: #10b981; /* Sucesso */
+    --danger-color: #ef4444;    /* Erro */
+    --warning-color: #f59e0b;   /* Alerta */
+    
+    --surface-color: #ffffff;
+    --background-color: #f3f6f9; /* Cinza Gelo Técnico */
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --border-color: #cbd5e1;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-main);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* --- Utilities & Animations --- */
+.fade-in { animation: fadeIn 0.5s ease-out forwards; }
+.slide-up { animation: slideUp 0.6s ease-out forwards; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+/* --- Scrollbar Customization --- */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--primary-color); }
+
+/* --- Components --- */
+.card-hover { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px -5px rgba(0, 64, 128, 0.15); /* Sombra Azulada */
+}
+
+/* --- Table Styles --- */
+.table-container {
+    max-height: 600px !important;
+    overflow: auto !important;
+    border-radius: 0.5rem;
+    box-shadow: inset 0 0 0 1px var(--border-color);
+}
+
+thead th {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: #f1f5f9;
+    color: var(--primary-color); /* Cabeçalho Azul */
+    backdrop-filter: blur(8px);
+}
+
+.editable-cell {
+    transition: all 0.2s ease;
+    cursor: text;
+    border-radius: 4px;
+}
+
+.editable-cell:hover {
+    background-color: var(--primary-light) !important;
+    color: var(--primary-dark);
+}
+
+.editable-cell:focus {
+    outline: 2px solid var(--primary-color);
+    background-color: #fff !important;
+    box-shadow: 0 0 0 4px rgba(0, 64, 128, 0.1);
+}
+
+.negative-consumption {
+    background-color: #fef2f2 !important;
+    color: var(--danger-color) !important;
+    font-weight: 600;
+}
+
+/* --- File Drop Zone --- */
+.file-drop-zone {
+    border: 2px dashed #cbd5e1;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background-color: #f8fafc;
+}
+
+.file-drop-zone:hover {
+    background-color: #fff;
+    border-color: var(--primary-color);
+    transform: scale(1.01);
+}
+
+.file-drop-zone.dragover {
+    background-color: var(--primary-light);
+    border-color: var(--primary-color);
+}
+
+/* --- Loading Spinner --- */
+.loading-spinner {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    border: 3px solid #e2e8f0;
+    border-top: 3px solid var(--accent-color); /* Verde Techmetria */
+    border-radius: 50%;
+    animation: spin 0.8s cubic-bezier(0.55, 0.055, 0.675, 0.19) infinite;
+}
+
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+/* --- Progress Bar --- */
+.progress-bar {
+    width: 100%;
+    height: 10px;
+    background-color: #e2e8f0;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    /* Gradiente Azul para Verde */
+    background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+    transition: width 0.4s ease;
+    border-radius: 999px;
+}
+
+/* --- Toast Notifications --- */
+#toast-container {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.toast {
+    min-width: 300px;
+    max-width: 450px;
+    padding: 1rem 1.25rem;
+    border-radius: 8px; /* Cantos menos arredondados = mais técnico */
+    color: white;
+    font-weight: 500;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.toast.show { opacity: 1; transform: translateX(0); }
+.toast.success { background: linear-gradient(135deg, #10b981, #047857); }
+.toast.error { background: linear-gradient(135deg, #ef4444, #b91c1c); }
+.toast.warning { background: linear-gradient(135deg, #f59e0b, #b45309); }
+
+/* --- Preview & Print --- */
+.preview-tab {
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    padding: 0.75rem 1rem;
+    margin-right: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    transition: all 0.2s ease;
+}
+
+.preview-tab:hover {
+    color: var(--primary-color);
+    background-color: #f8fafc;
+}
+
+.preview-tab.active {
+    color: var(--primary-color);
+    border-bottom-color: var(--accent-color); /* Linha verde embaixo */
+    background-color: #fff;
+}
+
+.common-area-checkbox {
+    cursor: pointer;
+    width: 1.25rem;
+    height: 1.25rem;
+    accent-color: var(--primary-color);
+}
+
+.accessibility-skip { position: absolute; left: -9999px; }
+.accessibility-skip:focus { left: 20px; top: 20px; z-index: 100; background: white; padding: 1rem; }
+
+@media print {
+    body { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    .no-print { display: none !important; }
+    .table-container { overflow: visible !important; max-height: none !important; }
+}
